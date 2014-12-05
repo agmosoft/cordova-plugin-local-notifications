@@ -2,13 +2,13 @@
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="de.appplant.cordova.plugin.local-notification"
+        id="com.agmosoft.cordova.plugin.local-notification"
         version="0.8.0dev">
 
     <name>LocalNotification</name>
 
     <description>The purpose of the plugin is to create an platform independent javascript interface for Cordova based mobile applications to access the specific Notification API on each platform.</description>
-    <repo>https://github.com/katzer/cordova-plugin-local-notifications.git</repo>
+    <repo>https://github.com/agmosoft/cordova-plugin-local-notifications.git</repo>
     <keywords>notification, local notification, alarm, scheduler, tile, live tiles, ios, android, windows phone 8, wp8</keywords>
     <license>Apache 2.0</license>
 
@@ -41,7 +41,7 @@
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="LocalNotification">
-                <param name="android-package" value="de.appplant.cordova.plugin.localnotification.LocalNotification"/>
+                <param name="android-package" value="com.agmosoft.cordova.plugin.localnotification.LocalNotification"/>
             </feature>
         </config-file>
 
@@ -52,14 +52,14 @@
              * Android notification bar. The notification uses the default notification
              * sound and it vibrates the phone.
             -->
-            <receiver android:name="de.appplant.cordova.plugin.localnotification.Receiver" />
+            <receiver android:name="com.agmosoft.cordova.plugin.localnotification.Receiver" />
 
             <!--
              * This class is triggered upon reboot of the device. It needs to re-register
              * the alarms with the AlarmManager since these alarms are lost in case of
              * reboot.
              -->
-            <receiver android:name="de.appplant.cordova.plugin.localnotification.Restore" >
+            <receiver android:name="com.agmosoft.cordova.plugin.localnotification.Restore" >
                 <intent-filter>
                     <action android:name="android.intent.action.BOOT_COMPLETED" />
                 </intent-filter>
@@ -70,7 +70,7 @@
              * The activity calls the background callback and brings the launch inten
              * up to foreground.
             -->
-            <activity android:name="de.appplant.cordova.plugin.localnotification.ReceiverActivity" android:launchMode="singleInstance" />
+            <activity android:name="com.agmosoft.cordova.plugin.localnotification.ReceiverActivity" android:launchMode="singleInstance" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
@@ -79,11 +79,11 @@
 
         <lib-file src="libs/android/android-support-v4.jar" />
 
-        <source-file src="src/android/LocalNotification.java" target-dir="src/de/appplant/cordova/plugin/localnotification" />
-        <source-file src="src/android/Receiver.java"          target-dir="src/de/appplant/cordova/plugin/localnotification" />
-        <source-file src="src/android/Options.java"           target-dir="src/de/appplant/cordova/plugin/localnotification" />
-        <source-file src="src/android/Restore.java"           target-dir="src/de/appplant/cordova/plugin/localnotification" />
-        <source-file src="src/android/ReceiverActivity.java"  target-dir="src/de/appplant/cordova/plugin/localnotification" />
+        <source-file src="src/android/LocalNotification.java" target-dir="src/com/agmosoft/cordova/plugin/localnotification" />
+        <source-file src="src/android/Receiver.java"          target-dir="src/com/agmosoft/cordova/plugin/localnotification" />
+        <source-file src="src/android/Options.java"           target-dir="src/com/agmosoft/cordova/plugin/localnotification" />
+        <source-file src="src/android/Restore.java"           target-dir="src/com/agmosoft/cordova/plugin/localnotification" />
+        <source-file src="src/android/ReceiverActivity.java"  target-dir="src/com/agmosoft/cordova/plugin/localnotification" />
     </platform>
 
     <!-- wp8 -->
