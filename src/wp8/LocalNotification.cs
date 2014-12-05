@@ -23,12 +23,13 @@ using System;
 using System.Linq;
 
 using Microsoft.Phone.Shell;
-
+using Microsoft.Phone.Scheduler;
 using WPCordovaClassLib.Cordova;
 using WPCordovaClassLib.Cordova.Commands;
 using WPCordovaClassLib.Cordova.JSON;
 
 using De.APPPlant.Cordova.Plugin.LocalNotification;
+using System.Collections.Generic;
 
 namespace Cordova.Extension.Commands
 {
@@ -51,7 +52,7 @@ namespace Cordova.Extension.Commands
         /// <summary>
         /// Sets application live tile
         /// </summary>
-        public void add (string jsonArgs)
+        public void addOriginal (string jsonArgs)
         {
             string[] args   = JsonHelper.Deserialize<string[]>(jsonArgs);
             Options options = JsonHelper.Deserialize<Options>(args[0]);
@@ -76,7 +77,7 @@ namespace Cordova.Extension.Commands
         /// <summary>
         /// Clears the application live tile
         /// </summary>
-        public void cancel (string jsonArgs)
+        public void cancelOriginal (string jsonArgs)
         {
             string[] args         = JsonHelper.Deserialize<string[]>(jsonArgs);
             string notificationID = args[0];
@@ -90,7 +91,7 @@ namespace Cordova.Extension.Commands
         /// <summary>
         /// Clears the application live tile
         /// </summary>
-        public void cancelAll (string jsonArgs)
+        public void cancelAllOriginal (string jsonArgs)
         {
             // Application Tile is always the first Tile, even if it is not pinned to Start.
             ShellTile AppTile = ShellTile.ActiveTiles.First();
@@ -233,5 +234,116 @@ namespace Cordova.Extension.Commands
         {
             RunsInBackground = false;
         }
+
+        public void add(string jsonArgs)
+            {
+                string[] args   = JsonHelper.Deserialize<string[]>(jsonArgs);
+                Options options = JsonHelper.Deserialize<Options>(args[0]);
+
+
+                
+                // Create Alarm
+                Alarm alarm = new Alarm(options.ID);
+                alarm.Content = options.Message;
+                alarm.Sound = new Uri(options.Sound, UriKind.Relative);
+                // Sound is not implemented yet
+                //alarm.Sound = new Uri("/Ringtones/Ring01.wma", UriKind.Relative);
+                // Convert Timestamp to DateTime
+                DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                DateTime date = origin.AddSeconds(options.Date);
+                date = GetLocalDateTime(date);
+                alarm.BeginTime = date.AddMinutes(1);
+                alarm.ExpirationTime = date.AddMinutes(5.0);
+                
+                if (options.Repeat == "daily")
+                {
+                    alarm.RecurrenceType = RecurrenceInterval.Daily;
+                }
+                else if (options.Repeat == "weekly")
+                {
+                    alarm.RecurrenceType = RecurrenceInterval.Weekly;
+                }
+                else if (options.Repeat == "monthly")
+                {
+                    alarm.RecurrenceType = RecurrenceInterval.Monthly;
+                }
+                else
+                {
+                    alarm.RecurrenceType = RecurrenceInterval.None;
+                }
+                // Add alarm, if not in the past
+                if (alarm.BeginTime > DateTime.Now)
+                {
+                    // Remove old
+                    ScheduledAction oldAlarm = ScheduledActionService.Find(options.ID);
+                    if (oldAlarm != null)
+                    {
+                        ScheduledActionService.Remove(options.ID);
+                    }
+
+                    // ScheduledActionService is limit to 50 notifications
+                    List<ScheduledNotification> notifications = ScheduledActionService.GetActions<ScheduledNotification>().ToList();
+                    if (notifications.Count < 50)
+                    {
+                        ScheduledActionService.Add(alarm);
+                        
+                    }
+                }
+
+                FireEvent("trigger", options.ID, options.JSON);
+                FireEvent("add", options.ID, options.JSON);
+
+                DispatchCommandResult();
+            }
+
+        DateTime GetLocalDateTime(DateTime targetDateTime)
+        {
+            int fromTimezone = 0;
+
+            int localTimezone;
+
+            if (TimeZoneInfo.Local.BaseUtcOffset.Minutes != 0)
+            {
+                localTimezone = Convert.ToInt16(TimeZoneInfo.Local.BaseUtcOffset.Hours.ToString() + (TimeZoneInfo.Local.BaseUtcOffset.Minutes / 60).ToString());
+            }
+            else
+            {
+                localTimezone = TimeZoneInfo.Local.BaseUtcOffset.Hours;
+            }
+            DateTime Sdt = targetDateTime;
+            DateTime UTCDateTime = targetDateTime.AddHours(-(fromTimezone));
+            DateTime localDateTime = UTCDateTime.AddHours(+(localTimezone));
+            return localDateTime;
+        }
+            /// <summary>
+            /// Clears the application live tile
+            /// </summary>
+            public void cancel(string jsonArgs)
+            {
+                string[] args         = JsonHelper.Deserialize<string[]>(jsonArgs);
+                string notificationID = args[0];
+
+                ScheduledAction alert = ScheduledActionService.Find(notificationID);
+                if (alert != null)
+                {
+                    ScheduledActionService.Remove(notificationID);
+                }
+
+                FireEvent("cancel", notificationID, "");
+            }
+
+            /// <summary>
+            /// Clears the application live tile
+            /// </summary>
+            public void cancelAll(string jsonArgs)
+            {
+                List<ScheduledNotification> reminders = ScheduledActionService.GetActions<ScheduledNotification>().ToList();
+                foreach (ScheduledNotification reminder in reminders)
+                {
+                    ScheduledActionService.Remove(reminder.Name);
+                }
+
+                DispatchCommandResult();
+            }
     }
 }
