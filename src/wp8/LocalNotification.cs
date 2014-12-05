@@ -28,7 +28,7 @@ using WPCordovaClassLib.Cordova;
 using WPCordovaClassLib.Cordova.Commands;
 using WPCordovaClassLib.Cordova.JSON;
 
-using De.APPPlant.Cordova.Plugin.LocalNotification;
+using com.agmosoft.Cordova.Plugin.LocalNotification;
 using System.Collections.Generic;
 
 namespace Cordova.Extension.Commands
