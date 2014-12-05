@@ -19,7 +19,7 @@
     under the License.
 */
 
-package de.appplant.cordova.plugin.localnotification;
+package com.agmosoft.cordova.plugin.localnotification;
 
 import java.util.Calendar;
 import java.util.Random;
