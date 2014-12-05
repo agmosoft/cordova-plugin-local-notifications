@@ -47,23 +47,23 @@ cordova plugin add https://github.com/agmosoft/cordova-plugin-local-notification
 or to use the last stable version:
 ```bash
 # ~~ stable version ~~
-cordova plugin add de.appplant.cordova.plugin.local-notification && cordova prepare
+cordova plugin add com.agmosoft.cordova.plugin.local-notification && cordova prepare
 ```
 
 ### Removing the Plugin from your project
 Through the [Command-line Interface][CLI]:
 ```bash
-cordova plugin rm de.appplant.cordova.plugin.local-notification
+cordova plugin rm com.agmosoft.cordova.plugin.local-notification
 ```
 
 ### PhoneGap Build
 Add the following xml to your config.xml to always use the latest version of this plugin:
 ```xml
-<gap:plugin name="de.appplant.cordova.plugin.local-notification" />
+<gap:plugin name="com.agmosoft.cordova.plugin.local-notification" />
 ```
 or to use an specific version:
 ```xml
-<gap:plugin name="de.appplant.cordova.plugin.local-notification" version="0.7.2" />
+<gap:plugin name="com.agmosoft.cordova.plugin.local-notification" version="0.7.2" />
 ```
 More informations can be found [here][PGB_plugin].
 
